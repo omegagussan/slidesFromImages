@@ -49,15 +49,18 @@ def isImage(filename):
     return filename.upper().endswith(SUPPORTED_FORMATS)
 
 # construct the argument parser and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-i", "--input_folder", required = True,
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input_folder", required = True,
 	help = "Folder with images to be parsed")
-ap.add_argument("-o", "--output_file", required = True,
+parser.add_argument("-o", "--output_file", required = True,
 	help = "Name of slides to be produced")
-args = vars(ap.parse_args())
+parser.add_argument('--r', dest='feature', action='store_true')
+parser.set_defaults(feature=False)
+args = vars(parser.parse_args())
 
 input_folder = args["input_folder"]
 output_file = args["output_file"]
+rotate_input = (args["feature"])
 temp_folder = "./temp"
 os.mkdir(temp_folder)
 
@@ -74,7 +77,12 @@ for image in only_images:
     relative_path = input_folder + "/" + image
     print("processing: " + relative_path)
     image = cv2.imread(relative_path)
-    original = image.copy()
+    if rotate_input:
+        original=cv2.transpose(image)
+        image=cv2.transpose(image)
+
+    else:
+        original = image.copy()
     ratio = image.shape[0] / TARGET_SIZE
     image = imutils.resize(image, height = TARGET_SIZE)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
