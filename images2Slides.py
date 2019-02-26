@@ -54,13 +54,18 @@ parser.add_argument("-i", "--input_folder", required = True,
 	help = "Folder with images to be parsed")
 parser.add_argument("-o", "--output_file", required = True,
 	help = "Name of slides to be produced")
-parser.add_argument('--r', dest='feature', action='store_true')
-parser.set_defaults(feature=False)
+parser.add_argument('--r', dest='rotate', action='store_true')
+parser.add_argument('--rr', dest='rotate_more', action='store_true')
+
+parser.set_defaults(rotate=False)
+parser.set_defaults(rotate_more=False)
 args = vars(parser.parse_args())
 
 input_folder = args["input_folder"]
 output_file = args["output_file"]
-rotate_input = (args["feature"])
+rotate_input = (args["rotate"])
+rotate_input_more = (args["rotate_more"])
+
 temp_folder = "./temp"
 os.mkdir(temp_folder)
 
@@ -80,7 +85,11 @@ for image in only_images:
     if rotate_input:
         original=cv2.transpose(image)
         image=cv2.transpose(image)
-
+    elif rotate_input_more:
+        original=cv2.transpose(image)
+        image=cv2.transpose(image)
+        original = cv2.flip(original, flipCode=0)
+        image = cv2.flip(image, flipCode=0)
     else:
         original = image.copy()
     ratio = image.shape[0] / TARGET_SIZE
