@@ -1,0 +1,4 @@
+pyinstaller
+python-pptx
+opencv-python
+imutils
